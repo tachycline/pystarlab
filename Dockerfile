@@ -1,5 +1,6 @@
 FROM continuumio/anaconda3
 RUN useradd -ms /bin/bash pystarlab
+RUN conda install -y django
 WORKDIR /usr/local
 RUN curl -SL http://atlacamani.marietta.edu:/depot/starlab-binaries.tar.bz2 | tar xjf -
 USER pystarlab
