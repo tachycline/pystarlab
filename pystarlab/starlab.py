@@ -10,17 +10,21 @@ import glob
 import pickle
 #import pylab as plt
 
-warehousepath = ".warehouse/"   
+warehousepath = ".warehouse/"
 
 class Story:
+    """Generic container class for starlab data."""
     def __init__(self):
+        """Create an empty story."""
         self.story_lines = []
         self.story_vals = dict()
         self.story_subobjects = []
         self.kind = None
         return
+    
     def __str__(self):
         return "%s, %d lines, %d values, %d subobjects" % (self.kind, len(self.story_lines), len(self.story_vals.keys()), len(self.story_subobjects))
+    
     def process_line(self, line):
         # if we can tokenize into an equality, store in the dict, otherwise as a line.
         chunks = re.split('=', line)
@@ -31,19 +35,28 @@ class Story:
             self.story_lines.append(line)
 
 class Run:
-    def __init__(self, kingmodel=True, w0=1.5, nstars=2500, masstype=1, runlength=100, exponent=-2.35):
+    """Metadata for a cluster simulation."""
+    
+    def __init__(self,
+                 kingmodel=True,
+                 w0=1.5,
+                 nstars=2500,
+                 masstype=1,
+                 runlength=100,
+                 exponent=-2.35):
+        """Initialize."""
         self.kingmodel = kingmodel
         self.w0 = w0
         self.nstars = nstars
 
         # mass scaling
-        self.masstype=masstype
-        self.exponent=exponent
+        self.masstype = masstype
+        self.exponent = exponent
         self.lowerlimit = 0.1
         self.upperlimit = 20
 
         # kira parameters
-        self.runlength=runlength
+        self.runlength = runlength
         self.diagout = 0.5
         self.dumpout = 0.5
         
@@ -153,19 +166,29 @@ def vis_story_3d(story_list):
 
 
 def premain(startn):
-    """Run a plummer model for 10 dynamical times and return the number of stars remaining."""
+    """Run a plummer model for 10 dynamical times and return the number
+    of stars remaining."""
     from subprocess import Popen, PIPE
     
     print "running %d particles" % startn
     cmds = []
 
-    cmds.append(["makeplummer", "-n", "%d"%startn, "-i"])
-    cmds.append(["kira", "-t", "10", "-d", "1", "-D", "2", "-n", "10", "-q", "0.5", "-G", "2"])
+    cmds.append(["makeplummer",
+                 "-n", "%d"%startn,
+                 "-i"])
+    cmds.append(["kira",
+                 "-t", "10",
+                 "-d", "1",
+                 "-D", "2",
+                 "-n", "10",
+                 "-q", "0.5",
+                 "-G", "2"])
     procs = []
     for index, cmd in enumerate(cmds):
         print index, cmd
         if index > 0:
-            procs.append(Popen(cmd, stdout=PIPE, stderr=PIPE, stdin=procs[index-1].stdout))
+            procs.append(Popen(cmd, stdout=PIPE, stderr=PIPE,
+                               stdin=procs[index-1].stdout))
         else:
             procs.append(Popen(cmd, stdout=PIPE, stderr=PIPE))
     inp = procs[-1].stdout
@@ -186,7 +209,6 @@ def grab_energies(slist):
         kinetics.append(float(slist.story_subobjects[1].story_vals['kinetic_energy']))
         potentials.append(float(slist.story_subobjects[1].story_vals['potential_energy']))
     return times, energies, kinetics, potentials
-# <codecell>
 
 def l2norm(E, U, T):
     U0 = 2*E[0]
