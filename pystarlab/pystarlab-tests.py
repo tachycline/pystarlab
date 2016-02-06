@@ -101,6 +101,10 @@ class StoryTest(unittest.TestCase):
         tested that from_buf works correctly for a single story,
         so I don't need to test for content here, only the number of
         stories returned.
+
+        In this case, a run for 10 time units with output every 2 will
+        give 5 snapshots, not including the initial conditions. Including
+        initial conditions will bump the number up to 6.
         """
 
         from pystarlab.starlab import Story
@@ -109,4 +113,4 @@ class StoryTest(unittest.TestCase):
                     "kira -t 10 -d 1 -D 2"]
 
         kira_snaps = Story.from_command_list(commands)
-        self.assertEquals(len(kira_snaps), 5)
+        self.assertEquals(len(kira_snaps), 6)

@@ -174,6 +174,10 @@ class Story:
 
         thestory = self.from_buf(story_lines)
 
+        # if the command was an integration, we'll get a list
+        if isinstance(thestory, list):
+            # include the initial conditions
+            thestory.insert(0, self)
         return thestory
 
 
