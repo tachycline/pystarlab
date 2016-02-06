@@ -1,0 +1,105 @@
+(Particle
+  N = 5
+(Log
+ ===>  Fri Feb  5 08:11:22 2016
+       Starlab 4.4.4 (user cmckay) : makeking -w 1.5 -s 1454677882 -n 5 -i
+         King model, w0 = 1.50, Rt/Rc = 2.578, Rh/Rc = 0.823, Mc/M = 0.654
+  initial_mass = 1
+  initial_rtidal_over_rvirial = 2.67466
+  initial_rvirial = 1
+  initial_total_energy = -0.25
+  random number generator seed = 1454677882
+)Log
+(Dynamics
+  com_pos = 0 0 0
+  com_time = 0
+  com_vel = 0 0 0
+  m = 1
+  r = 0 0 0
+  system_time = 0
+  total_energy = -0.25
+  v = 0 0 0
+)Dynamics
+(Hydro
+)Hydro
+(Star
+  mass_scale = -1
+  size_scale = -1
+  time_scale = -1
+)Star
+(Particle
+  N = 1
+  i = 1
+(Log
+)Log
+(Dynamics
+  m = 0.200000000000000011
+  r = 0.470702155049282034 -0.111109762894867375 0.14798525325460174
+  v = 0.154989482833267217 0.490459408882296943 -0.756664629941172673
+)Dynamics
+(Hydro
+)Hydro
+(Star
+)Star
+)Particle
+(Particle
+  N = 1
+  i = 2
+(Log
+)Log
+(Dynamics
+  m = 0.200000000000000011
+  r = 0.667410473825405082 -0.227530204804884589 0.496927421701221728
+  v = 0.340471933223862655 -0.50518872623763833 -0.0515163933462382054
+)Dynamics
+(Hydro
+)Hydro
+(Star
+)Star
+)Particle
+(Particle
+  N = 1
+  i = 3
+(Log
+)Log
+(Dynamics
+  m = 0.200000000000000011
+  r = -0.473160712495802438 0.0896768016859887107 -0.487628172575571228
+  v = -0.1226238158775943 -0.356309356850270265 0.639097883191759863
+)Dynamics
+(Hydro
+)Hydro
+(Star
+)Star
+)Particle
+(Particle
+  N = 1
+  i = 4
+(Log
+)Log
+(Dynamics
+  m = 0.200000000000000011
+  r = 0.00635724079679550903 -0.17662496899518948 0.453529145891153396
+  v = -0.618879464366871579 0.38953379568223806 0.338249164292565851
+)Dynamics
+(Hydro
+)Hydro
+(Star
+)Star
+)Particle
+(Particle
+  N = 1
+  i = 5
+(Log
+)Log
+(Dynamics
+  m = 0.200000000000000011
+  r = -0.671309157175680182 0.425588135008952928 -0.610813648271405496
+  v = 0.24604186418733609 -0.0184951214766264221 -0.169166024196914871
+)Dynamics
+(Hydro
+)Hydro
+(Star
+)Star
+)Particle
+)Particle
