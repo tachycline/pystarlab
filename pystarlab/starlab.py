@@ -1,6 +1,7 @@
 from subprocess import Popen, PIPE
 import os
 import re
+from tempfile import SpooledTemporaryFile as tempfile
 
 class Story:
     """Generic container class for starlab data."""
@@ -11,9 +12,9 @@ class Story:
         self.story_subobjects = []
         self.kind = None
         return
-    
+
     def __repr__(self):
-        """A unique representation of the story object."""        
+        """A unique representation of the story object."""
         return ("[Story] %s, %d lines, %d values, %d subobjects" %
                 (self.kind,
                  len(self.story_lines),
@@ -30,18 +31,76 @@ class Story:
         for substory in self.story_subobjects:
             selfstr += str(substory)
         return selfstr + ")%s\n" % self.kind
-    
+
+    @classmethod
+    def from_buf(cls, buffered_result):
+        """Generate a story from a buffer.
+
+        This could either be a stream or a string that has
+        been split into lines. It's supposed to add flexibility for
+        running long kira integrations in which we don't want to hold
+        the whole string in memory when converting it to stories.
+
+        We use a little bit of state to avoid using recursion here. The
+        reason for that is twofold:
+
+        1. We want to treat lines in Log-type stories a little differently, and
+        2. This will be more efficient, especially for large buffers.
+
+        :param buffered_result: Results of a starlab command in an iterable format
+        :type buffered_result: iterable
+
+        :returns: results parsed into a story
+        :rtype: story instance
+        """
+        stories_to_return = []
+        story_stack = []
+
+        # shouldn't be necessary
+        thestory = None
+
+        for line in buffered_result:
+            if isinstance(line, bytes):
+                line = line.decode()
+            # check to see if we need to start a new story
+            storystart = re.match("^\((\w+)",line)
+            if storystart:
+                thestory = cls()
+                thestory.kind = storystart.group(1)
+                story_stack.append(thestory)
+            else:
+                storyend = re.match("\)%s" % story_stack[-1].kind, line)
+                if storyend:
+                    thestory = story_stack.pop()
+                    if len(story_stack) > 0:
+                        story_stack[-1].story_subobjects.append(thestory)
+                    else:
+                        stories_to_return.append(thestory)
+                else:
+                    chunks = re.split('=', line)
+                    if ((len(chunks) == 2) and story_stack[-1].kind != "Log"):
+                        story_stack[-1].story_vals[chunks[0].strip()] = chunks[1].strip()
+                    else:
+                        story_stack[-1].story_lines.append(line)
+
+        if len(stories_to_return) == 0:
+            raise ValueError("No stories found in buffer!")
+        elif len(stories_to_return) == 1:
+            return stories_to_return[0]
+        else:
+            return stories_to_return
+
     @classmethod
     def from_string(cls, result_string):
         """Generate a story from a string.
-        
+
         Assumes the string contains a single story (possibly with story subobjects).
-        If there's more than one story in the string (e.g., output from kira), this 
+        If there's more than one story in the string (e.g., output from kira), this
         will grab the last and discard the rest.
-        
+
         :param result_string: The string to parse
         :type result_string: bytestring or unicode string
-        
+
         :returns: string parsed into a story
         :rtype: Story instance
         """
@@ -51,27 +110,22 @@ class Story:
             lines = result_string.splitlines()
         else:
             raise TypeError('result_string should be a string or bytestring')
-            
-        nextidx = -1
-        for index, line in enumerate(lines):
-            if index >= nextidx:
-                storystart = re.match("^\((\w+)",line)
-                if storystart:
-                    nextidx, newstory = cls.parse_lines(lines, index+1,
-                                                        storystart.group(1))
+
+        newstory = cls.from_buf(lines)
+
         return newstory
-    
+
     @classmethod
     def from_single_command(cls, command):
         """Generate a story from a single command.
-        
+
         The command should be a creation command (e.g., makeking, makeplummer, etc.).
         It should also include all of the necessary command line options.
-        
+
         :param command: The starlab command to run
         :type command: a string as it would appear on the command line
                        or a list suitable for subprocess.Popen()
-                       
+
         :returns: the output of command
         :rtype: Story instance
         """
@@ -81,11 +135,17 @@ class Story:
             pass
         else:
             raise TypeError('command should be a string or list')
+        thestory = None
+        story_lines = []
 
-        process = Popen(command, stdout=PIPE, stderr=PIPE)
-        result = process.communicate()
-        return cls.from_string(result[0])
-            
+        with Popen(command, stdout=PIPE, bufsize=1, universal_newlines=True) as process:
+            for line in process.stdout:
+                story_lines.append(line.rstrip())
+
+        thestory = cls.from_buf(story_lines)
+
+        return thestory
+
     @classmethod
     def from_command_list(cls, command_list):
         """Generate a story from a list of commands."""
@@ -93,28 +153,7 @@ class Story:
         for command in command_list:
             current_story = current_story.apply_command(command)
         return current_story
-    
-    @classmethod
-    def parse_lines(cls, lines, startidx, name):
-        """Recursively define stories from lines of output."""
-        thestory = cls()
-        thestory.kind = name
-        nextidx = -1
-        for index,line in enumerate(lines[startidx:]):
-            if index >= nextidx-startidx:
-                storystart = re.match("^\((\w+)",line)
-                storyend = re.match("\)%s"%name, line)
-                if storyend: # we've hit the end of our story; get out and pass it back up
-                    endindex = index
-                    break
-                elif storystart: # new story; start up a new parse_lines
-                    nextidx, newstory = cls.parse_lines(lines, startidx + index + 1,
-                                                        storystart.group(1))
-                    thestory.story_subobjects.append(newstory)
-                else:
-                    thestory.process_line(line)
-        return endindex + startidx + 1, thestory
-    
+
     def apply_command(self, command):
         """Apply a starlab command to this story and return the result"""
         if isinstance(command, str):
@@ -124,32 +163,23 @@ class Story:
         else:
             raise TypeError('command should be a string or list')
 
-        process = Popen(command, stdout=PIPE, stderr=PIPE, stdin=PIPE,
-                        universal_newlines=True)
-        result = process.communicate(input=str(self))
-        return self.from_string(result[0])
-    
-        
-    def integrate(self, kiracmd):
-        """Run the kira integrator with this story as initial conditions."""
-        #with Popen(cmds, stdout=PIPE, bufsize=1, universal_newlines=True) as p:
-        #    for line in p.stdout:
-        #        print(line, end='')
-        raise NotImplementedError
-        
-    def process_line(self, line):
-        """Deal with lines that hold a single value"""
-        # if we can tokenize into an equality, store in the dict, otherwise as a line.
-        chunks = re.split('=', line)
-        if len(chunks) == 2:
-            self.story_vals[chunks[0].strip()] = chunks[1].strip()
-        else:
-            self.story_lines.append(line)
-           
+        story_lines = []
+        with tempfile() as f:
+            f.write(str(self).encode())
+            f.seek(0)
+            with Popen(command, stdout=PIPE, stdin=f,
+                        universal_newlines=True, bufsize=1) as process:
+                for line in process.stdout:
+                    story_lines.append(line.rstrip())
+
+        thestory = self.from_buf(story_lines)
+
+        return thestory
+
 
 class Run:
     """Metadata for a cluster simulation."""
-    
+
     def __init__(self,
                  kingmodel=True,
                  w0=1.5,
