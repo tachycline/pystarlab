@@ -150,14 +150,34 @@ class Story:
 
     @classmethod
     def from_command_list(cls, command_list):
-        """Generate a story from a list of commands."""
+        """Generate a story from a list of commands.
+
+        This makes use of the from_single_command() and apply_command()
+        methods. The output of each command serves as the input of the
+        next; only the output of the last command is returned.
+        
+        :param command_list: the list of commands.
+        :type command_list: an iterable of strings containing the commands.
+
+        :returns: the output of the last command in the list
+        :rtype: Story instance
+        """
         current_story = cls.from_single_command(command_list.pop(0))
         for command in command_list:
             current_story = current_story.apply_command(command)
         return current_story
 
     def apply_command(self, command):
-        """Apply a starlab command to this story and return the result"""
+        """Apply a starlab command to this story and return the result.
+
+        Uses the current story as input to the given command.
+        :param command: The starlab command to run
+        :type command: a string as it would appear on the command line
+                       or a list suitable for subprocess.Popen()
+
+        :returns: the output of command
+        :rtype: Story instance
+        """
         if isinstance(command, str):
             command = command.split(" ")
         elif isinstance(command, list):
