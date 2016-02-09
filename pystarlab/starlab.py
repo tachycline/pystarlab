@@ -2,6 +2,8 @@ from subprocess import Popen, PIPE
 import os
 import re
 from tempfile import SpooledTemporaryFile as tempfile
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, Integer, Text
 
 class Story:
     """Generic container class for starlab data."""
@@ -180,6 +182,17 @@ class Story:
             thestory.insert(0, self)
         return thestory
 
+Base = declarative_base()
+class ArchivedStory(Base):
+    """Class for archiving stories via SQLAlchemy."""
+    __tablename__ = "stories"
+
+    id = Column(Integer, primary_key=True)
+    story_text = Column(Text)
+
+    def __repr__(self):
+        return self.story_text
+    
 
 class Run:
     """Metadata for a cluster simulation."""
