@@ -18,6 +18,9 @@ RUN tar xvzf starlabDockerPublic.tar.gz
 RUN cd starlab && ./configure --with-f77=no --with-grape=no --prefix=/usr/local \
     && make && make install && cd ..
 
+# clean up after starlab install
+RUN rm -rf starlab starlabDockerPublic.tar.gz sapporo
+
 WORKDIR /home/pystarlab
 ADD notebooks /home/pystarlab/notebooks
 ADD pystarlab /home/pystarlab/pystarlab
