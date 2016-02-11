@@ -22,10 +22,8 @@ RUN cd starlab && ./configure --with-f77=no --with-grape=no --prefix=/usr/local 
 RUN rm -rf starlab starlabDockerPublic.tar.gz sapporo
 
 WORKDIR /home/pystarlab
-ADD notebooks /home/pystarlab/notebooks
-ADD pystarlab /home/pystarlab/pystarlab
-RUN chown -R pystarlab /home/pystarlab
-WORKDIR /home/pystarlab/notebooks
+VOLUME /home/pystarlab
+EXPOSE 5000
 EXPOSE 8888
 ENTRYPOINT ["tini", "--"]
 ENV HOME /home/pystarlab
