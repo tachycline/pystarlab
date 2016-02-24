@@ -5,7 +5,8 @@ import re
 DATA_DIR = "test_data"
 
 class StoryTest(unittest.TestCase):
-
+    """Tests for the Story class."""
+    
     def test_from_string(self):
         """Test story creation from a string."""
         from pystarlab.starlab import Story
@@ -114,3 +115,7 @@ class StoryTest(unittest.TestCase):
 
         kira_snaps = Story.from_command_list(commands)
         self.assertEquals(len(kira_snaps), 6)
+
+class RunTest(unittest.TestCase):
+    """Tests for the Run class."""
+    def test_
