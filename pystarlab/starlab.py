@@ -247,14 +247,18 @@ class Option(object):
         
     def __str__(self):
         """Long format for use in html."""
-        string = "-{}:  {} [default: {}]".format(self.parameter, self.long_name, self.default_value)
+        string = "-{}: {} [default: {}]".format(self.parameter, self.long_name, self.default_value)
         if self.is_required:
             string += " [required]"
         return string
             
 class Command(object):
     def __init__(self):
+        
         self.options = []
+        # options_dict is set in child classes
+        if hasattr(self, 'options_dict'):
+            self.options.extend(self.parse_options())
         self.name = ""
 
     def __repr__(self):
@@ -265,6 +269,18 @@ class Command(object):
         options_str = " ".join(["{!s}\n".format(option) for option in self.options])
         return "{} {} \n Options:\n{}".format(self.name, self.html_description, options_str)
     
+    def parse_options(self):
+        the_options = []
+        for key, opt_dict in self.options_dict.items():
+            is_required = opt_dict.get('is_required', False)
+            default_value = opt_dict.get('default_value', None)
+            long_name = opt_dict.get('long_name', "")
+            the_options.append(Option(parameter=key,
+                                      long_name=long_name,
+                                      is_required=is_required,
+                                      default_value=default_value))
+        return the_options
+        
     def parse_args_options(self, **kwargs):
         # get values from kwargs, if available; otherwise use defaults
         for option in self.options:
@@ -280,39 +296,29 @@ class Makeking(Command):
     
     def __init__(self, **kwargs):
         
+        # options
+        self.options_dict = {"b":dict(long_name="specify Steve's rescaling parameter (< 1)",
+                                      default_value=0,
+                                      is_required=False),
+                            "i":dict(long_name="number the particles sequentially",
+                                     default_value=False,
+                                     is_required=False),
+                             "n":dict(long_name="specify number of particles",
+                                   is_required=True,
+                                   default_value=None),
+                             "s":dict(long_name="specify random seed",
+                                   is_required=True,
+                                   default_value=uuid.uuid4().time_low),
+                             "u":dict(long_name="leave final N-body system unscaled",
+                                   is_required=False,
+                                   default_value=False),
+                             "w":dict(long_name="specify King dimensionless depth",
+                                   is_required=True,
+                                   default_value=None)}
+        
         super().__init__()
         self.name = "makeking"
-        
-        # the list of options
-        self.options.append(Option(parameter="b",
-                                   long_name="specify Steve's rescaling parameter (< 1)",
-                                   default_value=0,
-                                   is_required=False))
-        self.options.append(Option(parameter="i",
-                                   long_name="number the particles sequentially",
-                                   default_value=False,
-                                   is_required=False))
-        self.options.append(Option(parameter="n",
-                                   long_name="specify number of particles",
-                                   is_required=True,
-                                   default_value=None))
-        self.options.append(Option(parameter="o",
-                                   long_name="echo value of random seed",
-                                   is_required=False,
-                                   default_value=False))
-        self.options.append(Option(parameter="s",
-                                   long_name="specify random seed",
-                                   is_required=True,
-                                   default_value=uuid.uuid4().time_low))
-        self.options.append(Option(parameter="u",
-                                   long_name="leave final N-body system unscaled",
-                                   is_required=False,
-                                   default_value=False))
-        self.options.append(Option(parameter="w",
-                                   long_name="specify King dimensionless depth",
-                                   is_required=True,
-                                   default_value=None))
-    
+            
         self.parse_args_options(**kwargs)
         
         

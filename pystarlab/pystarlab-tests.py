@@ -143,7 +143,7 @@ class OptionTest(unittest.TestCase):
                      long_name="specify number of particles",
                      is_required=True,
                      default_value=None)
-        self.assertEquals(str(opt), "-n:  specify number of particles [default: None] [required]")
+        self.assertEquals(str(opt), "-n: specify number of particles [default: None] [required]")
 
     def test_repr(self):
         """Test that the __repr__() is what is needed on the command line.
