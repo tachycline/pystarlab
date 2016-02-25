@@ -116,6 +116,58 @@ class StoryTest(unittest.TestCase):
         kira_snaps = Story.from_command_list(commands)
         self.assertEquals(len(kira_snaps), 6)
 
-class RunTest(unittest.TestCase):
-    """Tests for the Run class."""
-    def test_
+class OptionTest(unittest.TestCase):
+    """Tests for the Option class."""
+    
+    def test_creation(self):
+        from pystarlab.starlab import Option
+        opt = Option(parameter="n",
+                     long_name="specify number of particles",
+                     is_required=True,
+                     default_value=None)
+        self.assertIsInstance(opt, Option)
+        self.assertEquals(opt.parameter, "n")
+        self.assertTrue(opt.is_required)
+        self.assertEquals(opt.long_name, "specify number of particles")
+        self.assertIsNone(opt.default_value)
+        
+    def test_str(self):
+        from pystarlab.starlab import Option
+        opt = Option(parameter="n",
+                     long_name="specify number of particles",
+                     is_required=True,
+                     default_value=None)
+        self.assertEquals(str(opt), "-n:  specify number of particles [default: None] [required]")
+
+    def test_repr(self):
+        from pystarlab.starlab import Option
+        opt = Option(parameter="n",
+                     long_name="specify number of particles",
+                     is_required=True,
+                     default_value=None)
+        self.assertEquals(repr(opt), "")
+        opt.value = False
+        self.assertEquals(repr(opt), "")
+        opt.value = True
+        self.assertEquals(repr(opt), "-n")
+        opt.value = 500
+        self.assertEquals(repr(opt), "-n 500")
+
+class MakekingTest(unittest.TestCase):
+    def test_required(self):
+        from pystarlab.starlab import Makeking
+        self.assertRaises(ValueError, Makeking)
+        
+        self.assertRaises(ValueError, Makeking, n=500)
+        
+        self.assertRaises(ValueError, Makeking, w=1.4)
+        
+        king_nonfailing = Makeking(n=500, w=1.4)
+        
+    def test_repr(self):
+        from pystarlab.starlab import Makeking
+        king_nonfailing = Makeking(n=500, w=1.4)
+        self.assertEquals("makeking", repr(king_nonfailing).split(" ")[0])
+        self.assertIn("-w 1.4", repr(king_nonfailing))
+        self.assertIn("-n 500", repr(king_nonfailing))
+        self.assertIn("-s", repr(king_nonfailing)) # actual seed will be random
