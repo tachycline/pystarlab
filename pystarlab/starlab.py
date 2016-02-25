@@ -241,9 +241,9 @@ class Option(object):
         if self.value is None or self.value is False:
             return ""
         elif self.value is True:
-            return "-{}".format(self.parameter)
+            return "-{} ".format(self.parameter)
         else:
-            return "-{} {}".format(self.parameter, self.value)
+            return "-{} {} ".format(self.parameter, self.value)
         
     def __str__(self):
         """Long format for use in html."""
@@ -262,12 +262,13 @@ class Command(object):
         self.name = ""
 
     def __repr__(self):
-        options_str = " ".join(["{!r} ".format(option) for option in self.options])
+        options_str = "".join(["{!r}".format(option) for option in sorted(self.options,
+                                                                           key=lambda opt: opt.parameter)])
         return "{} {}".format(self.name, options_str)
     
     def __str__(self):
         options_str = " ".join(["{!s}\n".format(option) for option in self.options])
-        return "{} {} \n Options:\n{}".format(self.name, self.html_description, options_str)
+        return "{} {}\n Options:\n{}".format(self.name, self.html_description, options_str)
     
     def parse_options(self):
         the_options = []
@@ -352,6 +353,27 @@ class Makesphere(Command):
 
     Written by Steve McMillan.
     """
+    def __init__(self, **kwargs):
+        
+        self.options_dict = {"c":dict(long_name="add a comment to the output snapshot"),
+                             "C":dict(long_name="output data in 'col' format"),
+                             "i":dict(long_name="number the particles sequentially"),
+                             "l":dict(long_name="write sphere radius to dyn story"),
+                             "n":dict(is_required=True,
+                                      long_name="specify number of particles"),
+                             "o":dict(long_name="echo value of random seed"),                            
+                             "R":dict(long_name="specify sphere radius",
+                                      is_required=True,
+                                      default_value=1.0),
+                             "s":dict(long_name="specify random seed",
+                                      default_value=uuid.uuid4().time_low),
+                             "u":dict(long_name="leave unscaled"),
+                             "U":dict(long_name="leave unscaled and don't place in center of mass frame")}
+        super().__init__()
+        self.name = "makesphere"
+            
+        self.parse_args_options(**kwargs)
+
 
     
 class Makeplummer(Command):
@@ -546,6 +568,23 @@ class Scale(Command):
 
     Written by Steve McMillan.
     """
+    def __init__(self, **kwargs):
+        self.options_dict = {"c":dict(long_name="zero the center of mass position and velocity"),
+                             "d":dict(long_name="debug mode"),
+                             "e":dict(long_name="specify softening parameter",
+                                      default_value=0),
+                             "E":dict(long_name="specify total energy"),
+                             "m":dict(long_name="specify total mass"),
+                             "q":dict(long_name="specify virial ratio"),
+                             "r":dict(long_name="specify virial radius"),
+                             "s":dict(long_name="scale to \"standard\" units (-m 1 -r 1 -q 0.5)")}
+        
+        super().__init__()
+        self.name = "scale"
+            
+        self.parse_args_options(**kwargs)
+
+
     
 class Makebinary(Command):
     """Starlab version 4.4.4
