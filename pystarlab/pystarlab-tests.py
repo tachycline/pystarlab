@@ -5,7 +5,8 @@ import re
 DATA_DIR = "test_data"
 
 class StoryTest(unittest.TestCase):
-
+    """Tests for the Story class."""
+    
     def test_from_string(self):
         """Test story creation from a string."""
         from pystarlab.starlab import Story
@@ -114,3 +115,131 @@ class StoryTest(unittest.TestCase):
 
         kira_snaps = Story.from_command_list(commands)
         self.assertEquals(len(kira_snaps), 6)
+
+class OptionTest(unittest.TestCase):
+    """Tests for the Option class."""
+    
+    def test_creation(self):
+        """Test that the option is created with the right values in the right places."""
+        
+        from pystarlab.starlab import Option
+        opt = Option(parameter="n",
+                     long_name="specify number of particles",
+                     is_required=True,
+                     default_value=None)
+        
+        self.assertIsInstance(opt, Option)
+        self.assertEquals(opt.parameter, "n")
+        self.assertTrue(opt.is_required)
+        self.assertEquals(opt.long_name, "specify number of particles")
+        self.assertIsNone(opt.default_value)
+        self.assertIsNone(opt.value)
+        
+    def test_str(self):
+        """Test that the __str__() gives the correctly formatted description."""
+        
+        from pystarlab.starlab import Option
+        opt = Option(parameter="n",
+                     long_name="specify number of particles",
+                     is_required=True,
+                     default_value=None)
+        self.assertEquals(str(opt), "-n: specify number of particles [default: None] [required]")
+
+    def test_repr(self):
+        """Test that the __repr__() is what is needed on the command line.
+        
+        Also check the cases that lead to the option being omitted on the command line.
+        
+        If the value is True, just print the option and not the value.
+        """
+        
+        from pystarlab.starlab import Option
+        opt = Option(parameter="n",
+                     long_name="specify number of particles",
+                     is_required=True,
+                     default_value=None)
+        self.assertEquals(repr(opt), "")
+        opt.value = False
+        self.assertEquals(repr(opt), "")
+        opt.value = True
+        self.assertEquals(repr(opt), "-n ")
+        opt.value = 500
+        self.assertEquals(repr(opt), "-n 500 ")
+
+class MakekingTest(unittest.TestCase):
+    def test_required(self):
+        """Test that missing the required options throws an exception.
+        
+        And, that having both required arguments doesn't.
+        """
+        
+        from pystarlab.starlab import Makeking
+        self.assertRaises(ValueError, Makeking)
+        
+        self.assertRaises(ValueError, Makeking, n=500)
+        
+        self.assertRaises(ValueError, Makeking, w=1.4)
+        
+        # this will fail if it raises any exceptions
+        king_nonfailing = Makeking(n=500, w=1.4)
+        
+    def test_repr(self):
+        """Test that the __repr__() gives us a command with appropriate arguments."""
+        
+        from pystarlab.starlab import Makeking
+        king_nonfailing = Makeking(n=500, w=1.4)
+        
+        # command is first
+        self.assertEquals("makeking", repr(king_nonfailing).split(" ")[0])
+        
+        # order of arguments doesn't matter, so use assertIn()
+        self.assertIn("-w 1.4", repr(king_nonfailing))
+        self.assertIn("-n 500", repr(king_nonfailing))
+        self.assertIn("-s", repr(king_nonfailing)) # actual seed will be random
+        
+        # Note: other arguments with default values can be supplied,
+        # but we don't care about them, so there's no need to test.
+        
+        
+class MakesphereTest(unittest.TestCase):
+    
+    def test_required(self):
+        """Test that missing the required options throws an exception.
+        
+        And, that having both required arguments doesn't.
+        """
+        
+        from pystarlab.starlab import Makesphere
+        self.assertRaises(ValueError, Makesphere)
+        
+        # this will fail if it raises any exceptions
+        sphere_nonfailing = Makesphere(n=500)
+        
+    def test_repr(self):
+        """Test that the __repr__() gives us a command with appropriate arguments."""
+        
+        from pystarlab.starlab import Makesphere
+        sphere = Makesphere(n=500, R=1.4)
+        
+        # command is first
+        self.assertEquals("makesphere", repr(sphere).split(" ")[0])
+        
+        # order of arguments doesn't matter, so use assertIn()
+        self.assertIn("-R 1.4", repr(sphere))
+        self.assertIn("-n 500", repr(sphere))
+        self.assertIn("-s", repr(sphere)) # actual seed will be random
+        
+        # Note: other arguments with default values can be supplied,
+        # but we don't care about them, so there's no need to test.
+        
+class ScaleTest(unittest.TestCase):
+    """Tests for the scale command.
+    
+    This command has no required options, so we don't need to test for that."""
+    
+    def test_repr(self):
+        """Test that the __repr__() gives us a command with appropriate arguments."""
+        
+        from pystarlab.starlab import Scale
+        scale = Scale(c=True, m=1, r=1)
+        self.assertEquals("scale -c -e 0 -m 1 -r 1 ", repr(scale))

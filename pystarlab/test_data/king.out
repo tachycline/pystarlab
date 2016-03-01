@@ -2,7 +2,7 @@
   N = 5
 (Log
  ===>  Fri Feb  5 08:11:22 2016
-       Starlab 4.4.4 (user cmckay) : makeking -w 1.5 -s 1454677882 -n 5 -i
+       Starlab 4.4.4 : makeking -w 1.5 -s 1454677882 -n 5 -i
        random number generator seed = 1454677882
          King model, w0 = 1.50, Rt/Rc = 2.578, Rh/Rc = 0.823, Mc/M = 0.654
   initial_mass = 1

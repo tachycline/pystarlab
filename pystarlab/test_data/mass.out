@@ -2,13 +2,13 @@
   N = 5
 (Log
  ===>  Fri Feb  5 15:44:39 2016
-       Starlab 4.4.4 (user cmckay) : makeking -w 1.5 -s 1454677882 -n 5 -i
+       Starlab 4.4.4 : makeking -w 1.5 -s 1454677882 -n 5 -i
        random number generator seed = 1454677882
          King model, w0 = 1.50, Rt/Rc = 2.578, Rh/Rc = 0.823, Mc/M = 0.654
   initial_mass = 1.27722531193394
   initial_rtidal_over_rvirial = 2.67466
  ===>  Fri Feb  5 15:44:39 2016
-       Starlab 4.4.4 (user cmckay) : makemass -i -l 0.1 -u 20 -s 1454677882
+       Starlab 4.4.4 : makemass -i -l 0.1 -u 20 -s 1454677882
        random number generator seed = 1454677882
        Power_Law mass function, total mass =     1.28 Solar
 )Log
