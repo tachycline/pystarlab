@@ -402,26 +402,27 @@ class Makeplummer(Command):
          -u    leave unscaled [scale to E=-1/4, M = 1, R = 1]
 
     Written by Piet Hut and Steve McMillan.
-    """def __init__(self, **kwargs):
+    """
+    def __init__(self, **kwargs):
         
-            self.options_dict = {"c":dict(long_name="add a comment to the output snapshot"),
-                                 "C":dict(long_name="output data in 'col' format"),
-                                 "i":dict(long_name="number the particles sequentially [don't number]"),
-                                 "m":dict(long_name="specify mass cutoff (for finite radius) [0.999]"),
-                                 "n":dict(long_name="specify number of particles [no default]", 
-                                          is_required=True),
-                                 "o":dict(long_name="echo value of random seed [don't echo]"),
-                                 "r":dict(long_name="specify radius cutoff [22.804 for default mass cutoff]"),
-                                 "R":dict(long_name="toggle reshuffle of particles to remove correlation\
-                                       between index and distance from cluster center [true]"),
-                                 "s":dict(long_name="specify random seed [random from system clock]",
-                                          default_value=uuid.uuid4().time_low),
-                                 "u":dict(long_name="leave unscaled [scale to E=-1/4, M = 1, R = 1]")}
-            super().__init__()
-            self.name= "makeplummer"
-            
-            self.parse_args_options(**kwargs)
-    
+        self.options_dict = {"c":dict(long_name="add a comment to the output snapshot"),
+                             "C":dict(long_name="output data in 'col' format"),
+                             "i":dict(long_name="number the particles sequentially [don't number]"),
+                             "m":dict(long_name="specify mass cutoff (for finite radius) [0.999]"),
+                             "n":dict(long_name="specify number of particles [no default]", 
+                                      is_required=True),
+                                      "o":dict(long_name="echo value of random seed [don't echo]"),
+                                      "r":dict(long_name="specify radius cutoff [22.804 for default mass cutoff]"),
+                                      "R":dict(long_name="toggle reshuffle of particles to remove correlation\
+                                      between index and distance from cluster center [true]"),
+                                      "s":dict(long_name="specify random seed [random from system clock]",
+                                               default_value=uuid.uuid4().time_low),
+                                               "u":dict(long_name="leave unscaled [scale to E=-1/4, M = 1, R = 1]")}
+        super().__init__()
+        self.name= "makeplummer"
+        
+        self.parse_args_options(**kwargs)
+        
     
     
 class Makecube(Command):
