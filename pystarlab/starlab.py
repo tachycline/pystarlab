@@ -247,7 +247,7 @@ class Option(object):
         
     def __str__(self):
         """Long format for use in html."""
-        string = "-{}: {} [default: {}]".format(self.parameter, self.long_name, self.default_value)
+        string = "       -{}: {} [default: {}]".format(self.parameter, self.long_name, self.default_value)
         if self.is_required:
             string += " [required]"
         return string
@@ -267,8 +267,8 @@ class Command(object):
         return "{} {}".format(self.name, options_str)
     
     def __str__(self):
-        options_str = " ".join(["{!s}\n".format(option) for option in self.options])
-        return "{} {}\n Options:\n{}".format(self.name, self.html_description, options_str)
+        options_str = " ".join(["{!s}\n".format(option) for option in sorted(self.options, key=lambda x: x.parameter)])
+        return "{}:\n        {}\n\n        Options:\n {}".format(self.name, self.html_description, options_str)
     
     def parse_options(self):
         the_options = []
@@ -308,8 +308,7 @@ class Makeking(Command):
                                    is_required=True,
                                    default_value=None),
                              "s":dict(long_name="specify random seed",
-                                   is_required=True,
-                                   default_value=uuid.uuid4().time_low),
+                                   is_required=True),
                              "u":dict(long_name="leave final N-body system unscaled",
                                    is_required=False,
                                    default_value=False),
@@ -319,7 +318,7 @@ class Makeking(Command):
         
         super().__init__()
         self.name = "makeking"
-            
+        self.html_description = "Construct a King model.\n        Usage:  makeking [OPTIONS]\n"
         self.parse_args_options(**kwargs)
         
         
@@ -366,7 +365,7 @@ class Makesphere(Command):
                                       is_required=True,
                                       default_value=1.0),
                              "s":dict(long_name="specify random seed",
-                                      default_value=uuid.uuid4().time_low),
+                                      is_required=True),
                              "u":dict(long_name="leave unscaled"),
                              "U":dict(long_name="leave unscaled and don't place in center of mass frame")}
         super().__init__()
@@ -411,16 +410,23 @@ class Makeplummer(Command):
                              "m":dict(long_name="specify mass cutoff (for finite radius) [0.999]"),
                              "n":dict(long_name="specify number of particles [no default]", 
                                       is_required=True),
-                                      "o":dict(long_name="echo value of random seed [don't echo]"),
-                                      "r":dict(long_name="specify radius cutoff [22.804 for default mass cutoff]"),
-                                      "R":dict(long_name="toggle reshuffle of particles to remove correlation\
-                                      between index and distance from cluster center [true]"),
-                                      "s":dict(long_name="specify random seed [random from system clock]",
-                                               default_value=uuid.uuid4().time_low),
-                                               "u":dict(long_name="leave unscaled [scale to E=-1/4, M = 1, R = 1]")}
+                             "o":dict(long_name="echo value of random seed [don't echo]"),
+                             "r":dict(long_name="specify radius cutoff [22.804 for default mass cutoff]"),
+                             "R":dict(long_name="toggle reshuffle of particles to remove correlation between index and distance from cluster center [true]"),
+                             "s":dict(long_name="specify random seed",
+                                      is_required=True),
+                             "u":dict(long_name="leave unscaled [scale to E=-1/4, M = 1, R = 1]")}
+        
         super().__init__()
         self.name= "makeplummer"
-        
+        self.html_description = """Construct a Plummer model, with a spatial or mass cut-off to ensure
+        finite radius.  The new model system is written to standard output.
+        The model system is shifted to place its center of mass at rest at
+        the origin of coordinates.  Unscaled systems will be in approximate
+        virial equilibrium, based on the continuum limit.
+
+        Usage:   makeplummer [OPTIONS]
+"""
         self.parse_args_options(**kwargs)
         
     
