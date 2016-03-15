@@ -494,8 +494,8 @@ class Makemass(Command):
     """
     def __init__(self, **kwargs):
         self.options_dict = {"C":dict(long_name="output in 'col' format"),
-                            ("e","E","x","X"):dict(long_name="exponent"),
-                            ("F","f"):dict(long_name="""mass function option:
+                            "e":dict(long_name="exponent"),
+                            "f":dict(long_name="""mass function option:
                                    1) Power-law [default],\
                                    2) Miller & Scalo
                                      3) Scalo
@@ -508,11 +508,11 @@ class Makemass(Command):
                                    Power_Law, Miller_Scalo, Scalo, Kroupa,
                                    GdeMarchi, KTG91, TwoComponent, Kroupa01
                               option -f requires the appropriate integer."""),
-                            ("h","H"):dict(long_name="fraction of stars in high mass group"),
+                            "h":dict(long_name="fraction of stars in high mass group"),
                             "i":dict(long_name="(re)number stellar index from highest to lowest mass."),
-                            ("l","L"):dict(long_name="lower mass limit"),
-                            ("m","M"):dict(long_name="scale to specified total mass"),
-                            ("u","U"):dict(long_name="upper mass limit"),
+                            "l":dict(long_name="lower mass limit"),
+                            "m":dict(long_name="scale to specified total mass"),
+                            "u":dict(long_name="upper mass limit"),
                             "s":dict(long_name="scale to specified total mass",default_value=uuid.uuid4().time_low)}
                             
         super().__init__()
