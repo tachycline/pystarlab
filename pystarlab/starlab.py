@@ -402,7 +402,8 @@ class Makeplummer(Command):
          -u    leave unscaled [scale to E=-1/4, M = 1, R = 1]
 
     Written by Piet Hut and Steve McMillan.
-    """def __init__(self, **kwargs):
+    """
+    def __init__(self, **kwargs):
         
             self.options_dict = {"c":dict(long_name="add a comment to the output snapshot"),
                                  "C":dict(long_name="output data in 'col' format"),
@@ -491,6 +492,35 @@ class Makemass(Command):
 
     Written by Steve McMillan and Simon Portegies Zwart.
     """
+    def __init__(self, **kwargs):
+        self.options_dict = {"C":dict(long_name="output in 'col' format"),
+                            ("e","E","x","X"):dict(long_name="exponent"),
+                            ("F","f"):dict(long_name="""mass function option:
+                                   1) Power-law [default],\
+                                   2) Miller & Scalo
+                                     3) Scalo
+                                   4) Kroupa
+                                   5) GdeMarchi
+                                   6) Kroupa, Tout & Gilmore 1991
+                                   7) TwoComponent (uses -h, -l and -u)
+                                   8) Kroupa 2001
+                              option -F requires one of the following strings:
+                                   Power_Law, Miller_Scalo, Scalo, Kroupa,
+                                   GdeMarchi, KTG91, TwoComponent, Kroupa01
+                              option -f requires the appropriate integer."""),
+                            ("h","H"):dict(long_name="fraction of stars in high mass group"),
+                            "i":dict(long_name="(re)number stellar index from highest to lowest mass."),
+                            ("l","L"):dict(long_name="lower mass limit"),
+                            ("m","M"):dict(long_name="scale to specified total mass"),
+                            ("u","U"):dict(long_name="upper mass limit"),
+                            "s":dict(long_name="scale to specified total mass",default_value=uuid.uuid4().time_low)}
+                            
+        super().__init__()
+        self.name = "makemass"
+                             
+        self.parse_args_options(**kwargs)
+                           
+                   
 class Makesecondary(Command):
     """Starlab version 4.4.4
     program created on Jan 27 2016 at 22:14:08
