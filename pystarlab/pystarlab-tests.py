@@ -143,7 +143,7 @@ class OptionTest(unittest.TestCase):
                      long_name="specify number of particles",
                      is_required=True,
                      default_value=None)
-        self.assertEquals(str(opt), "-n: specify number of particles [default: None] [required]")
+        self.assertEquals(str(opt), "       -n: specify number of particles [default: None] [required]")
 
     def test_repr(self):
         """Test that the __repr__() is what is needed on the command line.
@@ -181,13 +181,13 @@ class MakekingTest(unittest.TestCase):
         self.assertRaises(ValueError, Makeking, w=1.4)
         
         # this will fail if it raises any exceptions
-        king_nonfailing = Makeking(n=500, w=1.4)
+        king_nonfailing = Makeking(n=500, w=1.4, s=12345678)
         
     def test_repr(self):
         """Test that the __repr__() gives us a command with appropriate arguments."""
         
         from pystarlab.starlab import Makeking
-        king_nonfailing = Makeking(n=500, w=1.4)
+        king_nonfailing = Makeking(n=500, w=1.4, s=12345678)
         
         # command is first
         self.assertEquals("makeking", repr(king_nonfailing).split(" ")[0])
@@ -195,11 +195,32 @@ class MakekingTest(unittest.TestCase):
         # order of arguments doesn't matter, so use assertIn()
         self.assertIn("-w 1.4", repr(king_nonfailing))
         self.assertIn("-n 500", repr(king_nonfailing))
-        self.assertIn("-s", repr(king_nonfailing)) # actual seed will be random
+        self.assertIn("-s 12345678", repr(king_nonfailing))
         
         # Note: other arguments with default values can be supplied,
         # but we don't care about them, so there's no need to test.
+
+    def test_str(self):
+
+        from pystarlab.starlab import Makeking
+        my_king = Makeking(n=500, w=1.4, s=12345678)
         
+        self.maxDiff = None
+        
+        description_string = """makeking:
+        Construct a King model.
+        Usage:  makeking [OPTIONS]
+
+
+        Options:
+        -b: specify Steve's rescaling parameter (< 1) [default: 0]
+        -i: number the particles sequentially [default: False]
+        -n: specify number of particles [default: None] [required]
+        -s: specify random seed [default: None] [required]
+        -u: leave final N-body system unscaled [default: False]
+        -w: specify King dimensionless depth [default: None] [required]
+"""
+        self.assertEquals(description_string, str(my_king))
         
 class MakesphereTest(unittest.TestCase):
     
@@ -211,15 +232,16 @@ class MakesphereTest(unittest.TestCase):
         
         from pystarlab.starlab import Makesphere
         self.assertRaises(ValueError, Makesphere)
+        self.assertRaises(ValueError, Makesphere, n=500)
         
         # this will fail if it raises any exceptions
-        sphere_nonfailing = Makesphere(n=500)
+        sphere_nonfailing = Makesphere(n=500, s=12345)
         
     def test_repr(self):
         """Test that the __repr__() gives us a command with appropriate arguments."""
         
         from pystarlab.starlab import Makesphere
-        sphere = Makesphere(n=500, R=1.4)
+        sphere = Makesphere(n=500, R=1.4, s=12345)
         
         # command is first
         self.assertEquals("makesphere", repr(sphere).split(" ")[0])
@@ -227,7 +249,7 @@ class MakesphereTest(unittest.TestCase):
         # order of arguments doesn't matter, so use assertIn()
         self.assertIn("-R 1.4", repr(sphere))
         self.assertIn("-n 500", repr(sphere))
-        self.assertIn("-s", repr(sphere)) # actual seed will be random
+        self.assertIn("-s 12345", repr(sphere))
         
         # Note: other arguments with default values can be supplied,
         # but we don't care about them, so there's no need to test.
@@ -243,3 +265,64 @@ class ScaleTest(unittest.TestCase):
         from pystarlab.starlab import Scale
         scale = Scale(c=True, m=1, r=1)
         self.assertEquals("scale -c -e 0 -m 1 -r 1 ", repr(scale))
+
+class MakeplummerTest(unittest.TestCase):
+    def test_required(self):
+        """Test that missing the required options throws an exception.
+        
+        And, that having both required arguments doesn't.
+        """
+        
+        from pystarlab.starlab import Makeplummer
+        self.assertRaises(ValueError, Makeplummer)
+        self.assertRaises(ValueError, Makeplummer, n=500)
+        
+        # this will fail if it raises any exceptions
+        plummer_nonfailing = Makeplummer(n=500, s=12345)
+        
+    def test_repr(self):
+        """Test that the __repr__() gives us a command with appropriate arguments."""
+        
+        from pystarlab.starlab import Makeplummer
+        plummer_nonfailing = Makeplummer(n=500, s=12345)
+        
+        # command is first
+        self.assertEquals("makeplummer", repr(plummer_nonfailing).split(" ")[0])
+        
+        # order of arguments doesn't matter, so use assertIn()
+        self.assertIn("-n 500", repr(plummer_nonfailing))
+        self.assertIn("-s 12345", repr(plummer_nonfailing))
+        
+        # Note: other arguments with default values can be supplied,
+        # but we don't care about them, so there's no need to test.
+
+    def test_str(self):
+        
+        from pystarlab.starlab import Makeplummer
+        plummer_nonfailing = Makeplummer(n=500, s=12345)
+        
+        description_string = """makeplummer:
+        Construct a Plummer model, with a spatial or mass cut-off to ensure
+        finite radius.  The new model system is written to standard output.
+        The model system is shifted to place its center of mass at rest at
+        the origin of coordinates.  Unscaled systems will be in approximate
+        virial equilibrium, based on the continuum limit.
+
+        Usage:   makeplummer [OPTIONS]
+
+
+        Options:
+        -C: output data in 'col' format [default: None]
+        -R: toggle reshuffle of particles to remove correlation between index and distance from cluster center [true] [default: None]
+        -c: add a comment to the output snapshot [default: None]
+        -i: number the particles sequentially [don't number] [default: None]
+        -m: specify mass cutoff (for finite radius) [0.999] [default: None]
+        -n: specify number of particles [no default] [default: None] [required]
+        -o: echo value of random seed [don't echo] [default: None]
+        -r: specify radius cutoff [22.804 for default mass cutoff] [default: None]
+        -s: specify random seed [default: None] [required]
+        -u: leave unscaled [scale to E=-1/4, M = 1, R = 1] [default: None]
+"""
+        
+        
+        self.assertEquals(description_string, str(plummer_nonfailing))
