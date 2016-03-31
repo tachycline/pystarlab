@@ -5,7 +5,6 @@ This wrapper provides data structures, serialization, and execution.
 
 import re
 import uuid
-from enum import Enum
 from subprocess import Popen, PIPE
 from tempfile import SpooledTemporaryFile as tempfile
 from sqlalchemy.ext.declarative import declarative_base
