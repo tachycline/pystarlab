@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Welcome to Starlab</title>
+    </head>
+    
+    <h3> Creation Command </h3>
+    
+    {% for command in commands['creation']%}
+    
+    <h4> {{ command.name }} </h4>
+    <form action="post.html" method="post">
+        <input type="hidden" name="make" value= {{ command }}>  </input> </br>
+        <ul>
+        {% for option in command.options %}
+        <li> {{ option.parameter }} <input type="text" name={{ option.parameter }} value={{ option.defaultvalue }}> </input></li>
+        {% endfor %}
+        </ul>
+
+        <br>
+        <br>
+        <input type="submit" value="Submit">
+
+    </form>
+    {% endfor %}
+
+</html>
+    

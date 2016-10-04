@@ -11,6 +11,8 @@ from tempfile import SpooledTemporaryFile as tempfile
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, Text, Float, String
 
+
+
 Base = declarative_base()
 class ArchivedStory(Base):
     """Class for archiving stories via SQLAlchemy."""
@@ -294,6 +296,7 @@ class Command(object):
 
 class Makeking(Command):
     """Command to construct a King Model."""
+    name = 'makeking'
     
     def __init__(self, **kwargs):
         
@@ -319,7 +322,7 @@ class Makeking(Command):
         
         super().__init__()
         self.name = "makeking"
-            
+        self.html_description = "Construct a King model. \n       Usage: makeking [OPTIONS]\n"     
         self.parse_args_options(**kwargs)
         
         
@@ -371,7 +374,7 @@ class Makesphere(Command):
                              "U":dict(long_name="leave unscaled and don't place in center of mass frame")}
         super().__init__()
         self.name = "makesphere"
-            
+        self.html_description = "Construct a Sphere model. \n       Usage: makesphere [OPTIONS]\n"
         self.parse_args_options(**kwargs)
 
 
@@ -420,7 +423,7 @@ class Makeplummer(Command):
                                  "u":dict(long_name="leave unscaled [scale to E=-1/4, M = 1, R = 1]")}
             super().__init__()
             self.name= "makeplummer"
-            
+            self.html_description = "Construct a Plummer model. \n       Usage: makeplummer [OPTIONS]\n"
             self.parse_args_options(**kwargs)
     
     
@@ -453,6 +456,24 @@ class Makecube(Command):
 
     Written by Steve McMillan.
     """
+    
+    def __init__(self, **kwargs):
+        
+            self.options_dict = {"c":dict(long_name="add a comment to the output snapshot"),
+                                 "C":dict(long_name="output data in 'col' format"),
+                                 "i":dict(long_name="number the particles sequentially [don't number]"),
+                                 "l":dict(long_name="write cube size to dyn story [don't write]"),
+                                 "L":dict(long_name="specify cube size (+/-L) [1]"),
+                                 "n":dict(long_name="specify number of particles [no default]"),
+                                 "o":dict(long_name="echo value of random seed [don't echo]"),
+                                 "s":dict(long_name="specify random seed [random from system clock]",
+                                          default_value=uuid.uuid4().time_low),
+                                 "u":dict(long_name="leave unscaled [scale to E=-1/4, M = 1, R = 1]")}
+            super().__init__()
+            self.name= "makecube"
+            self.html_description= "Construct a Cube model. \n       Usage: makecube [OPTIONS]\n"    
+            self.parse_args_options(**kwargs)
+    
     
 class Makemass(Command):
     """Starlab version 4.4.4
@@ -788,3 +809,5 @@ class Kira(Command):
 class Simulation(object):
     def __init__(self):
         raise NotImplementedError
+        
+COMMANDS={'creation':[Makeking(n=10, w=1.5, s=123456), Makeplummer, Makesphere, Makecube]}

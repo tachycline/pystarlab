@@ -1,0 +1,9 @@
+{
+  "pid": 7,
+  "base_url": "/",
+  "hostname": "localhost",
+  "notebook_dir": "/home/pystarlab",
+  "url": "http://localhost:8888/",
+  "port": 8888,
+  "secure": false
+}
