@@ -586,7 +586,23 @@ class Makesecondary(Command):
 
     Written by Steve McMillan and Simon Portegies Zwart.
     """
-    
+    def __init__(self, **kwargs):
+        
+        self.options_dict = {"C":dict(long_name="force output in 'col' format (dyn version only)"),
+                             "f":dict(long_name="specify binary fraction for top-level stars having masses greater than or equal to the value specified with 'm' option"),
+                             "i":dict(long_name="use (a,b) as component indices"),
+                             "I":dict(long_name="Don't limit masses to primary mass range"),
+                             "M":dict(long_name="specify upper limit for primaries to be binaries"),
+                             "m":dict(long_name="specify lower limit for primaries to be binaries"),
+                             "q":dict(long_name="select choice of minimum mass ration"),
+                             "S":dict(long_name"split primary star"),
+                             "s":dict(long_name"specify ranom seed"),
+                             "u":dict(long_name"specify upper limit on mass ratio or secondary mass")}
+        super().__init__()
+        self.name="makesecondary"
+        self.html_description = "Create binary secondary components for input. \n       Usage: makesecondary [OPTIONS]\n"
+        self.parse_args_options(**kwargs)
+        
 class Scale(Command):
     """Starlab version 4.4.4
     program created on Jan 27 2016 at 22:13:58
@@ -708,7 +724,25 @@ class Makebinary(Command):
 
     Written by Steve McMillan and Simon Portegies Zwart.
     """
+    def __init__(self, **kwargs):
+        self.options_dict = {"f":dict(long_name="""function select option
+        1: angular momentum per unit reduced mass
+            (l^2 = am[1-e^2]), solar units;
+            
+        2: semi-major axis or peri/apo, solar units;
+        
+        3: energy"""),
+                             "e":dict(long_name="maximum eccentricity"),
+                             "l":dict(long_name="lower limit on selected binary parameter"),
+                             "o":dict(long_name="specify interpretation of limits"),
+                             "s":dict(long_name="specify random seed [take from system clock]"),
+                             "u":dict(long_name="upper limit on selected binary parameter")}
 
+        super().__init__()
+        self.name ="makebinary"
+        self.html_description= "Complete binary formation process \n    Usage: makebinary [OPTIONS]\n"
+        self.parse_args_options(**kwargs)
+        
 class Kira(Command):
     """Starlab version 4.4.4
     program created on Jan 27 2016 at 22:14:29
@@ -805,6 +839,66 @@ class Kira(Command):
 
     Written by J. Makino, S. McMillan, S. Portegies Zwart, and P. Hut, .
     """
+    
+    def__init__(self, **kwargs):
+        
+        self.options_dict = {"0":dict(long_name="force non-GRAPE operation, if relevant"),
+                             "1":dict(long_name="suppress density calculation"),
+                             "2":dict(long_name="enable DMA GRAPE access"),
+                             "3":dict(long_name="enable special treatment of isolated multiples"),
+                             "a":dict(long_name="specify accuracy parameter"),
+                             "A":dict(long_name="enable 'alternate' output"),
+                             "b":dict(long_name="specify frequency of full binary output, in (integer) units of the log output interval"),
+                             "B":dict(long_name="turn on binary evolution"),
+                             "c":dict(long_name="include comment"),
+                             "C":dict(long_name="specify GRAPE release interval, in seconds"),
+                             "d":dict(long_name="specify log output interval"),
+                             "D":dict(long_name="""specify snapshot interval [end of run]. 
+                   Special values:
+                               xN: formatted full dump, frequency N;
+                               XN: unformatted full dump, frequency N;
+                               full/all: same as x1;
+                               b: track binary changes only (formatted);
+                               B: track binary changes (unformatted);"""),
+                             "e":dict(long_name="specify softening length"),
+                             "E":dict(long_name="use exact calculation"),
+                             "f":dict(long_name="turn on/off internal dynamical friction on stars"),
+                             "F":dict(long_name="turn on external dynamical friction on the cluster, and optionally specify a scaling coefficient"),
+                             "g":dict(long_name="specify hysteresis factor"),
+                             "G":dict(long_name="specify initial stripping radius"),
+                             "h":dict(long_name="specify stellar-evolution time step"),
+                             "i":dict(long_name="ignore all internal forces (i.e. external only)"),
+                             "I":dict(long_name="specify (re)initialization timescale"),
+                             "k":dict(long_name="specify perturbation factor")
+                             "K":dict(long_name="specify log2(maximum slowdown factor)"),
+                             "l":dict(long_name="specify close-encounter distance"),
+                             "L":dict(long_name="specify CPU time limit, in seconds"),
+                             "n":dict(long_name="stop at specified number of particles"),
+                             "N":dict(long_name="specify frequency of CPU check output"),
+                             "o":dict(long_name="prevent kira from overriding some settings (BGSu) based on input snapshot data"),
+                             "O":dict(long_name="save (and overwrite) extra snapshot at each output"),
+                             "q":dict(long_name="specify initial virial ratio"),
+                             "r":dict(long_name="specify initial virial radius"),
+                             "R":dict(long_name="specify snapshot file for (re)start"),
+                             "s":dict(long_name="specify random seed"),
+                             "S":dict(long_name="turn on stellar evolution"),
+                             "t":dict(long_name="specify time span of calculation"),
+                             "T":dict(long_name="enable experimental threading and specify n_threads"),
+                             "u":dict(long_name="enable/disable unperturbed multiples"),
+                             "U":dict(long_name="toggle all unperturbed motion"),
+                             "v":dict(long_name="toggle 'verbose' mode"),
+                             "W":dict(long_name="specify full-dump (worldline) timescale"),
+                             "x":dict(long_name="toggle output of extended-precision time"),
+                             "X":dict(long_name="specify escaper removal timescale"),
+                             "y":dict(long_name="specify stellar encounter criterion"),
+                             "z":dict(long_name="specify stellar merger criterion"),
+                             "Z":dict(long_name="specify stellar tidal dissipation criterion")}
+        super().__init__()
+        self.name= "kira"
+        self.html_description= "Hermite n-body integrator \n       Usage: kira [OPTIONS] < infile > output"
+        self.parse_args_options(**kwargs)
+                             
+                             
     
 class Simulation(object):
     def __init__(self):
